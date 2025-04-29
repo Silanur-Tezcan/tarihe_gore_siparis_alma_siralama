@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Mobil uyumlu yapabilmek için viewport ekledik -->
+    <title>Admin Paneli</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .btn-primary {
+            border-radius: 30px;
+            width: 250px;
+            position: relative;
+            right:5%;
+        }
+        .btn-lagout {
+            border-radius: 30px;
+            width: 200px;
+            position: relative;
+            right:-25%;
+        }
+        @media screen and (max-width:768px) {
+            .btn-primary {
+                border-radius: 30px;
+                width: 150px;
+                position: relative;
+                right:5%;
+            }
+            .btn-lagout {
+                border-radius: 30px;
+                width: 150px;
+                position: relative;
+                right:-20%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Gelen Siparişler ve Randevular</h1>
+    <!-- Table'ı responsive yapmak için 'table-responsive' sınıfını ekliyoruz -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Ad Soyad</th>
+                    <th>Telefon</th>
+                    <th>Rezervasyon Tarihi</th>
+                    <th>Gönderim Tarihi</th>
+                    <th>Açıklama</th>
+                    <th>Restaurant</th>
+                    <th>İşlem</th>  <!-- Silme Butonu için yeni sütun -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for reservation in reservations %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ reservation.name }}</td>
+                    <td>{{ reservation.phone }}</td>
+                    <td>{{ reservation.date }}</td>
+                    <td>{{ reservation.created_at }}</td>
+                    <td>{{ reservation.details }}</td>
+                    <td>{{ reservation.restaurant }}</td>
+                    <td>
+                        <!-- Silme Butonu -->
+                        <form action="{% url 'delete_reservation' reservation.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">Henüz sipariş bulunmuyor.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center mt-3">
+    <a href="{% url 'home' %}" class="btn btn-primary">Ana Sayfaya Dön</a>
+    <form action="{% url 'logout' %}" method="POST">  <!-- Çıkış Butonu -->
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger btn-lagout">Çıkış Yap</button>
+    </form>
+</div>
+</body>
+</html>
